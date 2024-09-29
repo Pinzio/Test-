@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pagina con Navbar e Form di Contatto</title>
+    <style>
+        /* Generali */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #333;
+            color: white;
+            padding: 10px 0;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .logo {
+            font-size: 1.5em;
+        }
+
+        .menu {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+        .menu li {
+            margin-left: 20px;
+        }
+
+        .menu li a {
+            color: white;
+            text-decoration: none;
+            padding: 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .menu li a:hover {
+            background-color: #575757;
+        }
+
+        /* Burger Menu */
+        .burger-menu {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+        }
+
+        .burger-menu span {
+            height: 3px;
+            width: 25px;
+            background-color: white;
+            margin: 4px 0;
+            transition: 0.4s;
+        }
+
+        /* Form di Contatto */
+        .contact-form {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #f9f9f9;
+        }
+
+        .contact-form h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .contact-form label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .contact-form input, 
+        .contact-form textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        .contact-form input:focus, 
+        .contact-form textarea:focus {
+            border-color: #666;
+            outline: none;
+        }
+
+        .contact-form button {
+            width: 100%;
+            padding: 10px;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .contact-form button:disabled {
+            background-color: #999;
+            cursor: not-allowed;
+        }
+
+        .contact-form button:hover:not(:disabled) {
+            background-color: #575757;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .menu {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                background-color: #333;
+            }
+
+            .menu li {
+                margin: 0;
+                text-align: center;
+                border-top: 1px solid #444;
+            }
+
+            .menu li a {
+                display: block;
+                padding: 10px 0;
+            }
+
+            .burger-menu {
+                display: flex;
+            }
+
+            #menu-toggle:checked + .burger-menu + .menu {
+                display: flex;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">Logo</div>
+            <input type="checkbox" id="menu-toggle" style="display: none;">
+            <label for="menu-toggle" class="burger-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </label>
+            <ul class="menu">
+                <li><a href="#">Home</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="#">Services</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="contact-form">
+            <h2>Contattaci</h2>
+            <form id="contact-form">
+                <label for="name">Nome:</label>
+                <input type="text" id="name" name="name" required>
+
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+
+                <label for="message">Messaggio:</label>
+                <textarea id="message" name="message" rows="4" required></textarea>
+
+                <button type="submit" id="submit-button" disabled>Invia</button>
+            </form>
+        </section>
+    </main>
+
+    <!-- Include EmailJS -->
+    <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+    <script>
+        // Initialize EmailJS
+        emailjs.init('Ofg-UHbihgEgjI4Xa'); // Sostituisci con il tuo User ID di EmailJS
+
+        // Handle form submission
+        document.getElementById('contact-form').addEventListener('input', function() {
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const message = document.getElementById('message').value.trim();
+            const submitButton = document.getElementById('submit-button');
+
+            // Abilita/disabilita il pulsante in base alla validità del modulo
+            submitButton.disabled = !(name && email && message);
+        });
+
+        document.getElementById('contact-form').addEventListener('submit', function(event) {
+            event.preventDefault(); // Evita l'invio del form standard
+
+            // Invia il form con EmailJS
+            emailjs.sendForm('service_vp3vw9j', 'template_q7mai5x', this)
+                .then(function(response) {
+                    alert('Messaggio inviato con successo!');
+                    document.getElementById('contact-form').reset(); // Resetta il modulo
+                    document.getElementById('submit-button').disabled = true; // Disabilita il pulsante
+                }, function(error) {
+                    alert('Errore nell\'invio del messaggio: ' + JSON.stringify(error));
+                });
+        });
+    </script>
+</body>
+</html>
